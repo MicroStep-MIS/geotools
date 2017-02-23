@@ -163,6 +163,7 @@ public class OracleDialect extends PreparedStatementSQLDialect {
     		put("NVARCHAR", String.class);
     		put("NVARCHAR2", String.class);
             put("DATE", java.sql.Date.class);
+            put("TIMESTAMP", java.sql.Timestamp.class);
     	}
     };
     
@@ -1436,6 +1437,12 @@ public class OracleDialect extends PreparedStatementSQLDialect {
         // starting with Oracle 11 + recent JDBC drivers the DATE type does not have a mapping
         // anymore in the JDBC driver, manually register it instead
         overrides.put(Types.DATE, "DATE");
+		// the above mapping maintains backwards compatibility with older
+		// GeoTools code, but breaks Oracle's new default DATE to
+		// java.sql.Timestamp mapping. We need to explicitly define a new
+		// mapping for TIMESTAMPs in order to have at least some Oracle database
+		// type with the ability to read and write both date and time information
+        overrides.put(Types.TIMESTAMP, "TIMESTAMP");
     }
     
     @Override
